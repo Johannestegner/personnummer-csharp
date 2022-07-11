@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using Personnummer.Exceptions;
+using Personnummer.Formatters;
 using Xunit;
 
 namespace Personnummer.Tests
@@ -208,7 +209,7 @@ namespace Personnummer.Tests
             // Short format will always guess that it's latest century.
             Assert.Equal(ssn.SeparatedFormat.Replace("+", "-"), Personnummer.Parse(ssn.ShortFormat, new Personnummer.Options { AllowCoordinationNumber = true }).Format());
         }
-
+        
         [Theory]
         [ClassData(typeof(ValidSsnDataProvider))]
         [ClassData(typeof(ValidSsnDataProvider))]
@@ -219,6 +220,48 @@ namespace Personnummer.Tests
             Assert.Equal(ssn.SeparatedLong, Personnummer.Parse(ssn.LongFormat, new Personnummer.Options { AllowCoordinationNumber = true }).Format(true));
         }
 
+        [Theory]
+        [ClassData(typeof(ValidSsnDataProvider))]
+        [ClassData(typeof(ValidCnDataProvider))]
+        public void TestFormatLongFormatter(PersonnummerData ssn)
+        {
+            Assert.Equal(ssn.LongFormat, Personnummer.Parse(ssn.SeparatedLong, new Personnummer.Options { AllowCoordinationNumber = true }).Format(LongFormat.Instance));
+            Assert.Equal(ssn.LongFormat, Personnummer.Parse(ssn.SeparatedFormat, new Personnummer.Options { AllowCoordinationNumber = true }).Format(LongFormat.Instance));
+            Assert.Equal(ssn.LongFormat, Personnummer.Parse(ssn.LongFormat, new Personnummer.Options { AllowCoordinationNumber = true }).Format(LongFormat.Instance));
+        }
+        
+        [Theory]
+        [ClassData(typeof(ValidSsnDataProvider))]
+        [ClassData(typeof(ValidCnDataProvider))]
+        public void TestFormatLongFormatterSeparated(PersonnummerData ssn)
+        {
+            Assert.Equal(ssn.SeparatedLong, Personnummer.Parse(ssn.SeparatedLong, new Personnummer.Options { AllowCoordinationNumber = true }).Format(LongSeparatedFormat.Instance));
+            Assert.Equal(ssn.SeparatedLong, Personnummer.Parse(ssn.SeparatedFormat, new Personnummer.Options { AllowCoordinationNumber = true }).Format(LongSeparatedFormat.Instance));
+            Assert.Equal(ssn.SeparatedLong, Personnummer.Parse(ssn.LongFormat, new Personnummer.Options { AllowCoordinationNumber = true }).Format(LongSeparatedFormat.Instance));
+        }
+
+        [Theory]
+        [ClassData(typeof(ValidSsnDataProvider))]
+        [ClassData(typeof(ValidCnDataProvider))]
+        public void TestFormatShort(PersonnummerData ssn)
+        {
+            Assert.Equal(ssn.ShortFormat, Personnummer.Parse(ssn.SeparatedLong, new Personnummer.Options { AllowCoordinationNumber = true }).Format(ShortFormat.Instance));
+            Assert.Equal(ssn.ShortFormat, Personnummer.Parse(ssn.SeparatedFormat, new Personnummer.Options { AllowCoordinationNumber = true }).Format(ShortFormat.Instance));
+            Assert.Equal(ssn.ShortFormat, Personnummer.Parse(ssn.LongFormat, new Personnummer.Options { AllowCoordinationNumber = true }).Format(ShortFormat.Instance));
+        }
+        
+        [Theory]
+        [ClassData(typeof(ValidSsnDataProvider))]
+        [ClassData(typeof(ValidCnDataProvider))]
+        public void TestFormatShortSeparated(PersonnummerData ssn)
+        {
+            Assert.Equal(ssn.SeparatedFormat, Personnummer.Parse(ssn.SeparatedLong, new Personnummer.Options { AllowCoordinationNumber = true }).Format(ShortSeparatedFormat.Instance));
+            Assert.Equal(ssn.SeparatedFormat, Personnummer.Parse(ssn.SeparatedFormat, new Personnummer.Options { AllowCoordinationNumber = true }).Format(ShortSeparatedFormat.Instance));
+            Assert.Equal(ssn.SeparatedFormat, Personnummer.Parse(ssn.LongFormat, new Personnummer.Options { AllowCoordinationNumber = true }).Format(ShortSeparatedFormat.Instance));
+            // Short format will always guess that it's latest century.
+            Assert.Equal(ssn.SeparatedFormat.Replace("+", "-"), Personnummer.Parse(ssn.ShortFormat, new Personnummer.Options { AllowCoordinationNumber = true }).Format(ShortSeparatedFormat.Instance));
+        }
+        
         [Theory]
         [ClassData(typeof(InvalidSsnDataProvider))]
         [ClassData(typeof(InvalidCnDataProvider))]

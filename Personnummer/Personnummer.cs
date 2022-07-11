@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 using Personnummer.Exceptions;
+using Personnummer.Formatters;
 
 namespace Personnummer
 {
@@ -133,6 +134,11 @@ namespace Personnummer
             return ignoreSeparator ? $"{(longFormat ? FullYear : Year)}{Month}{Day}{Numbers}" : $"{(longFormat ? FullYear : Year)}{Month}{Day}{Separator}{Numbers}";
         }
 
+        public string Format(IFormatter formatter)
+        {
+            return formatter.Format(this);
+        }
+        
         /// <summary>
         /// Parse a personal identity number - as string - into a Personnummer object.
         ///
